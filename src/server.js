@@ -37,7 +37,7 @@ $.init((err) =>{
     console.log('inited [env=%s]', $.env);
   }
 
-require('./test');
+/*require('./test');*/
 /*
   const item = new $.model.User ({
     name: 'test',

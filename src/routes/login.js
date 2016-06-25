@@ -29,7 +29,7 @@ module.exports=function (done){
   });
 
   $.router.post('/api/signup', async function (req, res, next){
-      const user = await $.method('user.add').call(req.query);
+      const user = await $.method('user.add').call(req.body);
       res.json({user: user});
   });
 
