@@ -2,7 +2,7 @@
 
 module.exports=function (done){
 
-  $.router.post('/api/login_user', async function (req, res, next){
+  $.router.get('/api/login_user', async function (req, res, next){
     res.apiSuccess({user: req.session.user, token:req.session.logout_token});
   });
 
@@ -28,6 +28,15 @@ module.exports=function (done){
      res.apiSuccess ({});
   });
 
+  $.router.post('/api/logout', async function (req, res, next) {
+
+    delete req.session.user;
+    delete req.session.logout_token;
+
+    res.apiSuccess({});
+
+  });
+  
   $.router.post('/api/signup', async function (req, res, next){
       const user = await $.method('user.add').call(req.body);
       res.apiSuccess({user: user});

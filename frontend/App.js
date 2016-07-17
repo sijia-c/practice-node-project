@@ -2,10 +2,10 @@ import React from 'react';
 import Header from './component/Header';
 import Footer from './component/Footer';
 import TopicList from './component/TopicList';
-import TopicDetail from './component/TopicDetail';
-import { Router, Route, Link, browserHistory } from 'react-router'
 
-class Index extends React.Component{
+
+
+export default class App extends React.Component{
   render (){
     return (
       <div>
@@ -14,17 +14,5 @@ class Index extends React.Component{
        <Footer />
       </div>
     )
-  }
-}
-
-export default class App extends React.Component{
-  render (){
-    return (
-       <Router history={browserHistory}>
-        <Route path="/" component={Index}>
-          <Route path="/topic/:id" component={TopicDetail}/>
-         </Route>
-        </Router>
-    );
   }
 }

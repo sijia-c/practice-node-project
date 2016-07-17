@@ -60,7 +60,7 @@ module.exports=function (done){
     const update={};
     if (params.title)update.title=params.title;
     if (params.content)update.content=params.content;
-    if (params.tags) update.tags=params.tag;
+    if (params.tags) update.tags=params.tags;
     return $.model.Topic.update({_id:params._id},{$set:update});
   });
 
@@ -100,16 +100,12 @@ module.exports=function (done){
     cid: {required: true, validate:(v)=>validator.isMongoId(String(v))},
   });
   $.method('topic.comment.delete').register(async function (params){
-    const comment={
-      cid: new $.utils.ObjectId(),
-      authorId: params.authorId,
-      content: params.content,
-      createdAt:new Date(),
-    };
 
     return $.model.Topic.update({_id:params._id},{
       $pull:{
-        'comments.cid':params.cid,
+        comments:{
+         _id: params.cid,
+       }
       }
     });
   });
