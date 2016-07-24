@@ -10,6 +10,7 @@ export function request(method, path, data = {}) {
       method,
       url: `${urlBase}/${path}`,
     };
+    console.log(`${urlBase}/${path}`);
     if (method === 'GET' || method === 'HEAD') {
       options.qs = data;
     } else {

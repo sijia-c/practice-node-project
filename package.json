@@ -100,6 +100,7 @@
   "dependencies": {
     "body-parser": "^1.15.1",
     "browser-request": "^0.3.3",
+    "codemirror": "^5.17.0",
     "connect-multiparty": "^2.0.0",
     "connect-redis": "^3.1.0",
     "debug": "^2.2.0",
@@ -112,6 +113,7 @@
     "multipart": "^0.1.5",
     "project-core": "^0.1.3",
     "react": "^15.2.0",
+    "react-codemirror": "^0.2.6",
     "react-dom": "^15.2.0",
     "react-router": "^2.5.2",
     "serve-static": "^1.11.1",

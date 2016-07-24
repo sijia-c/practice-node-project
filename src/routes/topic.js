@@ -2,7 +2,8 @@
 
 module.exports=function (done){
   $.router.post('/api/topic/add', $.checkLogin, async function(req,res,next){
-    req.body.authorId=req.session.user._id;
+    req.body.author=req.session.user._id;
+    console.log(req.body.author);
     if ('tags' in req.body){
       req.body.tags=req.body.tags.split(',').map(v=>v.trim()).filter(v=>v);
     }
@@ -41,14 +42,14 @@ $.router.delete('/api/topic/item/:topic_id', $.checkLogin, $.checkTopicAuthor,as
 
 $.router.post('/api/topic/item/:topic_id/comment/add', $.checkLogin,async function(req,res,next){
   req.body._id=req.params.topic_id;
-  req.body.authorId=req.session.user._id;
+  req.body.author=req.session.user._id;
   const comment=await $.method('topic.comment.add').call(req.body);
   res.apiSuccess({comment});
 });
 
 $.router.post('/api/topic/item/:topic_id/comment/add', $.checkTopicAuthor,async function(req,res,next){
   req.body._id=req.params.topic_id;
-  req.body.authorId=req.session.user._id;
+  req.body.author=req.session.user._id;
   const comment=await $.method('topic.comment.add').call(req.body);
   res.apiSuccess({comment});
 });

@@ -46,6 +46,7 @@ module.exports = {
       colors: true
     },
     hot: true,
+
     proxy: {
       '*': 'http://127.0.0.1:3001',
     }

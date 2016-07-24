@@ -41,13 +41,16 @@ export default class Header extends React.Component{
         </li>
         <li><Link to="/new"><i className="glyphicon glyphicon-plus"></i> 发帖</Link></li>
       </ul>
-      <ul className="nav navbar-nav navbar-right">
       {this.state.user ? (
+       <ul className="nav navbar-nav navbar-right">
         <li><a href="#" onClick={this.handleLogout.bind(this)}>注销 [{this.state.user.nickname}]</a></li>
+       </ul>
       ):(
+       <ul className="nav navbar-nav navbar-right">
         <li><Link to="/login">登录</Link></li>
+        <li><Link to="/signup">注册</Link></li>
+       </ul>
       )}
-      </ul>
     </div>
   </div>
 </nav>

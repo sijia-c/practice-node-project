@@ -4,7 +4,7 @@ import validator from 'validator';
 
 module.exports=function (done){
   $.method('topic.add').check({
-    authorId:{required:true,validate:(v)=>validator.isMongoId(String(v))},
+    author:{required:true,validate:(v)=>validator.isMongoId(String(v))},
     title:{required:true},
     content:{required:true},
     tags:{validate:(v)=>Array.isArray(v)},
@@ -19,7 +19,16 @@ module.exports=function (done){
     _id: {required: true, validate:(v)=>validator.isMongoId(String(v))},
   });
   $.method('topic.get').register(async function (params){
-    return $.model.Topic.findOne({_id:params._id});
+    return $.model.Topic.findOne({_id:params._id})
+    .populate({
+      path: 'author',
+      model: 'User',
+      select: 'nickname about',
+    }).populate({
+      path: 'comments.author',
+      model: 'User',
+      select: 'nickname about',
+    });
   });
   $.method('topic.list').check({
     authorId:{validate:(v)=>validator.isMongoId(String(v))},
@@ -38,6 +47,10 @@ module.exports=function (done){
       createdAt: 1,
       updatedAt:1,
       lastCommentedAt:1,
+    }).populate({
+      path: 'author',
+      model: 'User',
+      select: 'nickname about',
     });
     if (params.skip) ret.skip(Number(params.skip));
     if (params.limit) ret.limit(Number(params.limit));
@@ -66,13 +79,13 @@ module.exports=function (done){
 
   $.method('topic.comment.add').check({
     _id: {required: true, validate:(v)=>validator.isMongoId(String(v))},
-    authorId: {required: true, validate:(v)=>validator.isMongoId(String(v))},
+    author: {required: true, validate:(v)=>validator.isMongoId(String(v))},
     content:{required:true},
   });
   $.method('topic.comment.add').register(async function (params){
     const comment={
       cid: new $.utils.ObjectId(),
-      authorId: params.authorId,
+      author: params.author,
       content: params.content,
       createdAt:new Date(),
     };
