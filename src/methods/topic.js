@@ -9,6 +9,7 @@ module.exports=function (done){
     content:{required:true},
     tags:{validate:(v)=>Array.isArray(v)},
   });
+
   $.method('topic.add').register(async function (params){
     const topic =new $.model.Topic(params);
     topic.createdAt=new Date();
@@ -31,17 +32,17 @@ module.exports=function (done){
     });
   });
   $.method('topic.list').check({
-    authorId:{validate:(v)=>validator.isMongoId(String(v))},
+    author:{validate:(v)=>validator.isMongoId(String(v))},
     tags:{validate:(v)=>Array.isArray(v)},
     skip:{validate:(v)=>v>=0},
     limit:{validate:(v)=>v>0},
   });
   $.method('topic.list').register(async function(params){
     const query={};
-    if (params.authorId)query.authorId=params.authorId;
+    if (params.author)query.author=params.author;
     if (params.tags) query.tags={$all:params.tags};
     const ret= $.model.Topic.find(query,{
-      authorId: 1,
+      author: 1,
       title: 1,
       tags: 1,
       createdAt: 1,
@@ -57,6 +58,19 @@ module.exports=function (done){
     return ret;
   });
 
+  $.method('topic.count').check({
+    author: {validate: (v) => validator.isMongoId(String(v))},
+    tags: {validate: (v) => Array.isArray(v)},
+  });
+  $.method('topic.count').register(async function (params) {
+
+    const query = {};
+    if (params.author) query.author = params.author;
+    if (params.tags) query.tags = {$all: params.tags};
+
+    return $.model.Topic.count(query);
+
+  });
 
   $.method('topic.delete').check({
     _id: {required: true, validate:(v)=>validator.isMongoId(String(v))},

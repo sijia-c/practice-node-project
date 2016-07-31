@@ -3,7 +3,13 @@
 module.exports=function (done){
   $.router.post('/api/topic/add', $.checkLogin, async function(req,res,next){
     req.body.author=req.session.user._id;
-    console.log(req.body.author);
+    {
+      const key = `addtopic:${req.body.author}:${$.utils.date('YmdH')}`;
+      const limit = 2;
+      const ok = await $.limiter.incr(key, limit);
+      if (!ok) throw new Error('out of limit');
+    }
+    
     if ('tags' in req.body){
       req.body.tags=req.body.tags.split(',').map(v=>v.trim()).filter(v=>v);
     }
@@ -15,14 +21,37 @@ module.exports=function (done){
     if ('tags' in req.query){
       req.query.tags=req.query.tags.split(',').map(v=>v.trim()).filter(v=>v);
     }
+    let page = parseInt(req.query.page, 10);
+    if (!(page > 1)) page = 1;
+    req.query.limit = 10;
+    req.query.skip = (page - 1) * req.query.limit;
     const list=await $.method('topic.list').call(req.query);
-    res.apiSuccess({list});
+    const count = await $.method('topic.count').call(req.query);
+    const pageSize = Math.ceil(count / req.query.limit);
+    res.apiSuccess({count, page, pageSize, list});
   });
 
   $.router.get('/api/topic/item/:topic_id',async function(req,res,next){
    const topic =await $.method ('topic.get').call({_id:req.params.topic_id});
    if (!topic) return next(new Error (`topic ${req.params.topic_id} does not exist`));
-   res.apiSuccess({topic});
+
+   const userId = req.session.user && req.session.user._id && req.session.user._id.toString();
+   const isAdmin = req.session.user && req.session.user.isAdmin;
+
+   const result = {};
+   result.topic = $.utils.cloneObject(topic);
+   result.topic.permission = {
+      edit: isAdmin || userId === result.topic.author._id,
+      delete: isAdmin || userId === result.topic.author._id,
+    };
+
+    result.topic.comments.forEach(item => {
+      item.permission = {
+        delete: isAdmin || userId === item.author._id,
+      };
+    });
+
+   res.apiSuccess(result);
  });
 
 $.router.post('/api/topic/item/:topic_id', $.checkLogin,$.checkTopicAuthor,async function(req,res,next){

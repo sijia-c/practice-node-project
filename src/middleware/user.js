@@ -9,11 +9,13 @@ module.exports =function (done){
   $.checkTopicAuthor = async function (req,res,next){
     const topic=await $.method('topic.get').call({_id:req.params.topic_id});
     if (!topic) return next (new Error (`topic ${req.params.topic_id} does not exist`));
-    if (topic.authorId.toString()!==req.session.user._id.toString()){
-      return next(new Error('access denied'));
-    }
-    req.topic=topic;
-    next();
-  }
+    req.topic = topic;
+
+    if (req.session.user.isAdmin) return next();
+    if (topic.author._id.toString() === req.session.user._id.toString()) return next();
+
+    next(new Error('access denied'));
+
+  };
   done ();
 };

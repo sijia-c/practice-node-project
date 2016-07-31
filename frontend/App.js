@@ -10,7 +10,7 @@ export default class App extends React.Component{
     return (
       <div>
        <Header />
-        {this.props.children ? this.props.children : <TopicList />}
+        {this.props.children ? this.props.children : <TopicList {...this.props}/>}
        <Footer />
       </div>
     )

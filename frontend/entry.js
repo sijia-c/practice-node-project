@@ -11,11 +11,11 @@ import Login from './component/Login';
 import Signup from './component/Signup';
 import NewTopic from './component/NewTopic';
 import EditTopic from './component/EditTopic';
+import Profile from './component/Profile';
 
-
-/*getTopicList({})
+getTopicList({})
  .then(ret => console.log(ret))
- .catch(err=>console.error(err));*/
+ .catch(err=>console.error(err));
 //console.log('hello, world');
 /*
 class App extends React.Component{
@@ -38,6 +38,7 @@ ReactDOM.render((
      <Route path="new" component={NewTopic}/>
      <Route path="login" component={Login}/>
      <Route path="signup" component={Signup}/>
+     <Route path="profile" component={Profile}/>
     </Route>
    </Router>
 ), e);
