@@ -8,7 +8,7 @@ import TopicList from './component/TopicList';
 export default class App extends React.Component{
   render (){
     return (
-      <div>
+      <div className="container">
        <Header />
         {this.props.children ? this.props.children : <TopicList {...this.props}/>}
        <Footer />

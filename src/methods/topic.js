@@ -48,6 +48,7 @@ module.exports=function (done){
       createdAt: 1,
       updatedAt:1,
       lastCommentedAt:1,
+      pageView: 1,
     }).populate({
       path: 'author',
       model: 'User',
@@ -91,6 +92,16 @@ module.exports=function (done){
     return $.model.Topic.update({_id:params._id},{$set:update});
   });
 
+  $.method('topic.incrPageView').check({
+    _id: {required: true, validate: (v) => validator.isMongoId(String(v))},
+  });
+  
+  $.method('topic.incrPageView').register(async function (params) {
+
+    return $.model.Topic.update({_id: params._id}, {$inc: {pageView: 1}});
+
+  });
+
   $.method('topic.comment.add').check({
     _id: {required: true, validate:(v)=>validator.isMongoId(String(v))},
     author: {required: true, validate:(v)=>validator.isMongoId(String(v))},
@@ -98,11 +109,23 @@ module.exports=function (done){
   });
   $.method('topic.comment.add').register(async function (params){
     const comment={
-      cid: new $.utils.ObjectId(),
       author: params.author,
       content: params.content,
       createdAt:new Date(),
     };
+
+    const topic = await $.method('topic.get').call({_id: params._id});
+    if (!topic) throw new Error('topic does not exists');
+
+    await $.method('notification.add').call({
+      from: params.author,
+      to: topic.author._id,
+      type: 'topic_comment',
+      data: {
+        _id: params._id,
+        title: topic.title,
+      },
+    });
 
     return $.model.Topic.update({_id:params._id},{$push:{comments:comment}});
   });
@@ -118,6 +141,10 @@ module.exports=function (done){
       'comments._id':params.cid
     },{
       'comments.$': 1,
+    }).populate({
+      path: 'author',
+      model: 'User',
+      select: 'nickname about',
     });
   });
 

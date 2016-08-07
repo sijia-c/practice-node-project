@@ -9,6 +9,7 @@ export default class TopicEditor extends React.Component{
   constructor(props){
     super(props);
     this.state=props.topic||{};
+    console.log(this.props.title);
   }
 
   handleChange(name, e){
@@ -20,14 +21,14 @@ export default class TopicEditor extends React.Component{
     $btn.button('loading');
     this.props.onSave(this.state,()=>{
       $btn.button('reset');
-    })
+    });
   }
 
 
   render () {
     return (
       <div className="panel panel-primary">
-      <div className="panel-heading">｛this.props.title｝</div>
+      <div className="panel-heading">{this.props.title}</div>
       <div className="panel-body">
         <form>
           <div className="form-group">

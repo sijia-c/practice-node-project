@@ -8,6 +8,13 @@ module.exports=function (done){
 
   $.router.post('/api/login', async function (req, res, next){
      if (!req.body.password) return next (new Error ('missing password'));
+     // 频率限制
+    const key = `login:${req.body.name}:${$.utils.date('Ymd')}`;
+    {
+      const limit = 5;
+      const ok = await $.limiter.incr(key, limit);
+      if (!ok) throw new Error('out of limit');
+    }
      const user = await $.method('user.get').call(req.body);
      if (!user) return next (new Error('user does not exist!'));
      if (!$.utils.validatePassword(req.body.password, user.password)){
@@ -36,8 +43,16 @@ module.exports=function (done){
     res.apiSuccess({});
 
   });
-  
+
   $.router.post('/api/signup', async function (req, res, next){
+    // 频率限制
+  {
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const key = `signup:${ip}:${$.utils.date('Ymd')}`;
+    const limit = 2;
+    const ok = await $.limiter.incr(key, limit);
+    if (!ok) throw new Error('out of limit');
+  }
       const user = await $.method('user.add').call(req.body);
       res.apiSuccess({user: user});
   });

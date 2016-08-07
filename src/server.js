@@ -28,7 +28,8 @@ $.init.load(path.resolve(__dirname,'methods'));
 $.init.load(path.resolve(__dirname,'init','express.js'));
 $.init.load(path.resolve(__dirname,'middleware'));
 $.init.load(path.resolve(__dirname,'routes'));
-
+// 初始化limiter
+$.init.load(path.resolve(__dirname, 'init', 'limiter.js'));
 
 $.init((err) =>{
   if (err) {
