@@ -23,7 +23,17 @@ module.exports=function (done){
 
      req.session.user=user;
      req.session.logout_token=$.utils.randomString(20);
-     res.apiSuccess({token:req.session.logout_token});
+
+     if (req.session.github_user) {
+      await $.method('user.update').call({
+        _id: user._id,
+        githubUsername: req.session.github_user.username,
+      });
+      delete req.session.github_user;
+    }
+    
+    await $.limiter.reset(key);
+    res.apiSuccess({token:req.session.logout_token});
   });
 
   $.router.get('/api/logout', async function (req, res, next){
@@ -54,6 +64,15 @@ module.exports=function (done){
     if (!ok) throw new Error('out of limit');
   }
       const user = await $.method('user.add').call(req.body);
+
+      $.method('mail.sendTemplate').call({
+       to: user.email,
+       subject: '欢迎',
+       template: 'welcome',
+       data: user,
+      }, err => {
+        if (err) console.error(err);
+      });
       res.apiSuccess({user: user});
   });
 

@@ -13,6 +13,7 @@ import NewTopic from './component/NewTopic';
 import EditTopic from './component/EditTopic';
 import Profile from './component/Profile';
 import Notification from './component/Notification';
+import ResetPassword from './component/ResetPassword';
 
 getTopicList({})
  .then(ret => console.log(ret))
@@ -39,6 +40,7 @@ ReactDOM.render((
      <Route path="new" component={NewTopic}/>
      <Route path="login" component={Login}/>
      <Route path="signup" component={Signup}/>
+     <Route path="reset_password" component={ResetPassword}/>
      <Route path="profile" component={Profile}/>
      <Route path="notification" component={Notification}/>
     </Route>

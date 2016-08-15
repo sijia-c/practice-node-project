@@ -67,7 +67,7 @@ module.exports = function (done) {
       _id: user._id,
       password: req.body.password,
     });
-
+    console.log(req.body);
     res.apiSuccess({email: req.body.email});
 
   });
