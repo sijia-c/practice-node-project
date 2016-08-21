@@ -48,11 +48,16 @@ app.use(function (req,res,next){
 
   app.use(router);
   app.use('/static', serveStatic(path.resolve(__dirname,'../../static')));
+  app.use('/build', serveStatic(path.resolve(__dirname, '../../frontend/build')));
   app.use('/api',function(err,req,res,next){
     debug('API error: %s', err && err.stack || err);
     res.json({error: err.toString()});
   })
-  app.listen($.config.get('web.port'),(err) =>{
-    done(err);
-  });
+  if ($.config.get('web.port')) {
+    app.listen($.config.get('web.port'), (err) => {
+      done(err);
+    });
+  } else {
+    done();
+  }
 };
